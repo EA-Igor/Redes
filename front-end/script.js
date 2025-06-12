@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const unidadeTx = document.getElementById('unidade-tx');
     const textoStatus = document.getElementById('texto-status');
     const ultimaAtualizacao = document.getElementById('ultima-atualizacao');
-    const botaoToggle = document.getElementById('botao-toggle');
+    const botaoToggle = document.getElementById('botao-alternar');
     const nomeHost = document.getElementById('nome-host');
     const nomeInterface = document.getElementById('nome-interface');
 
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (bits < 1000000) return { valor: (bits / 1000).toFixed(2), unidade: 'Kbps' };
         if (bits < 1000000000) return { valor: (bits / 1000000).toFixed(2), unidade: 'Mbps' };
         return { valor: (bits / 1000000000).toFixed(2), unidade: 'Gbps' };
-    }
+    }   
 
     async function buscarDadosTrafego() {
         try {
