@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const unidadeTx = document.getElementById('unidade-tx');
     const textoStatus = document.getElementById('texto-status');
     const ultimaAtualizacao = document.getElementById('ultima-atualizacao');
-    const botaoToggle = document.getElementById('botao-alternar');
+    const botaoToggle = document.getElementById('botao-toggle');
     const nomeHost = document.getElementById('nome-host');
     const nomeInterface = document.getElementById('nome-interface');
 

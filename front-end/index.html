@@ -9,23 +9,24 @@
 
 <body>
 
-    <div class="container">
-        <h2>Monitor SNMP MikroTik</h2>
+    <h2>Monitor SNMP MikroTik</h2>
 
-        <div id="status-bar">
-            <div class="info" id="hostname">IP/Hostname: --</div>
-            <div class="info" id="interface-name">Interface: --</div>
-            <div class="info">Download: <span id="rx-value">0</span> <span id="rx-unit">bps</span></div>
-            <div class="info">Upload: <span id="tx-value">0</span> <span id="tx-unit">bps</span></div>
-            <div class="info">Status: <span id="status-text">--</span></div>
-            <div class="info">Última atualização: <span id="last-update-time">--</span></div>
-            <button id="toggle-button">Pausar</button>
-        </div>
-
-        <canvas id="trafficChart"></canvas>
+    <div id="barra-status">
+        <div class="info" id="nome-host">IP/Hostname: --</div>
+        <div class="info" id="nome-interface">Interface: --</div>
+        <div class="info">Download: <span id="valor-rx">0</span> <span id="unidade-rx">bps</span></div>
+        <div class="info">Upload: <span id="valor-tx">0</span> <span id="unidade-tx">bps</span></div>
+        <div class="info">Status: <span id="texto-status">--</span></div>
+        <div class="info">Última atualização: <span id="ultima-atualizacao">--</span></div>
+        <button id="botao-alternar">Pausar</button>
     </div>
 
+    <canvas id="grafico-trafego"></canvas>
+
+    <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Script de monitoramento -->
     <script src="script.js"></script>
 
 </body>
