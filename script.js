@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const API_URL_BASE = 'http://localhost:3002';
-    const INTERVALO_ATUALIZACAO = 1000;
+    const URL_API = 'http://localhost:3002';
+    const INTERVALO_PESQUISA = 1000;
     const MAX_PONTOS = 60;
 
     const valorRx = document.getElementById('valor-rx');
@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const unidadeTx = document.getElementById('unidade-tx');
     const textoStatus = document.getElementById('texto-status');
     const ultimaAtualizacao = document.getElementById('ultima-atualizacao');
-    const botaoToggle = document.getElementById('botao-alternar');
+    const botaoAlternar = document.getElementById('botao-alternar');
     const nomeHost = document.getElementById('nome-host');
     const nomeInterface = document.getElementById('nome-interface');
 
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function buscarDadosTrafego() {
         try {
-            const resposta = await fetch(`${API_URL_BASE}/api/traffic`);
+            const resposta = await fetch(`${URL_API}/api/traffic`);
             const dados = await resposta.json();
 
             if (dados.error || dados.message.includes("Primeira coleta")) {
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            atualizarUI(dados);
+            atualizarInterface(dados);
 
         } catch (erro) {
             console.error("Erro ao buscar tráfego:", erro);
@@ -45,11 +45,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function buscarInfoInterface() {
         try {
-            const respostaNome = await fetch(`${API_URL_BASE}/api/interface-name`);
+            const respostaNome = await fetch(`${URL_API}/api/interface-name`);
             const dadosNome = await respostaNome.json();
             nomeInterface.textContent = `Interface: ${dadosNome.name}`;
 
-            const respostaConfig = await fetch(`${API_URL_BASE}/`);
+            const respostaConfig = await fetch(`${URL_API}/`);
             const textoConfig = await respostaConfig.text();
             const ipEncontrado = textoConfig.match(/IP=([\d.]+)/);
             nomeHost.textContent = `IP/Hostname: ${ipEncontrado ? ipEncontrado[1] : '--'}`;
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function atualizarUI(dados) {
+    function atualizarInterface(dados) {
         const rx = formatarTaxa(dados.inBitsPerSecond);
         const tx = formatarTaxa(dados.outBitsPerSecond);
 
@@ -71,14 +71,14 @@ document.addEventListener('DOMContentLoaded', () => {
         definirStatus('Conectado', '#4caf50');
         ultimaAtualizacao.textContent = new Date().toLocaleTimeString();
 
-        const horario = new Date().toLocaleTimeString();
-        adicionarNoGrafico(horario, dados.inBitsPerSecond / 1000, dados.outBitsPerSecond / 1000);
+        const timestamp = new Date().toLocaleTimeString();
+        adicionarAoGrafico(timestamp, dados.inBitsPerSecond / 1000, dados.outBitsPerSecond / 1000);
     }
 
-    function adicionarNoGrafico(label, dadoRx, dadoTx) {
-        grafico.data.labels.push(label);
-        grafico.data.datasets[0].data.push(dadoRx);
-        grafico.data.datasets[1].data.push(dadoTx);
+    function adicionarAoGrafico(rotulo, dadoRx, dadoTx) {
+        grafico.data.labels.push(rotulo);
+        grafico.data.datasets[0].data.push(dadoRx); // Download (Rx)
+        grafico.data.datasets[1].data.push(dadoTx); // Upload (Tx)
 
         if (grafico.data.labels.length > MAX_PONTOS) {
             grafico.data.labels.shift();
@@ -93,30 +93,27 @@ document.addEventListener('DOMContentLoaded', () => {
         textoStatus.style.color = cor;
     }
 
-    function iniciarGrafico() {
-        const ctx = document.getElementById('grafico-trafego').getContext('2d');
-        grafico = new Chart(ctx, {
+    function inicializarGrafico() {
+        const contexto = document.getElementById('trafficChart').getContext('2d');
+        grafico = new Chart(contexto, {
             type: 'line',
             data: {
                 labels: [],
-                datasets: [
-                    {
-                        label: 'Download (Rx) - Kbps',
-                        data: [],
-                        borderColor: '#38a169',
-                        backgroundColor: 'rgba(56, 161, 105, 0.2)',
-                        fill: true,
-                        tension: 0.4
-                    },
-                    {
-                        label: 'Upload (Tx) - Kbps',
-                        data: [],
-                        borderColor: '#3182ce',
-                        backgroundColor: 'rgba(49, 130, 206, 0.2)',
-                        fill: true,
-                        tension: 0.4
-                    }
-                ]
+                datasets: [{
+                    label: 'Download (Rx) - Kbps',
+                    data: [],
+                    borderColor: '#38a169',
+                    backgroundColor: 'rgba(56, 161, 105, 0.2)',
+                    fill: true,
+                    tension: 0.4
+                }, {
+                    label: 'Upload (Tx) - Kbps',
+                    data: [],
+                    borderColor: '#3182ce',
+                    backgroundColor: 'rgba(49, 130, 206, 0.2)',
+                    fill: true,
+                    tension: 0.4
+                }]
             },
             options: {
                 responsive: true,
@@ -140,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function iniciarMonitoramento() {
         if (intervaloTrafego) clearInterval(intervaloTrafego);
         buscarDadosTrafego();
-        intervaloTrafego = setInterval(buscarDadosTrafego, INTERVALO_ATUALIZACAO);
+        intervaloTrafego = setInterval(buscarDadosTrafego, INTERVALO_PESQUISA);
     }
 
     function pararMonitoramento() {
@@ -151,17 +148,17 @@ document.addEventListener('DOMContentLoaded', () => {
         pausado = !pausado;
         if (pausado) {
             pararMonitoramento();
-            botaoToggle.textContent = 'Retomar';
+            botaoAlternar.textContent = 'Retomar';
             definirStatus('Pausado', 'orange');
         } else {
             iniciarMonitoramento();
-            botaoToggle.textContent = 'Pausar';
+            botaoAlternar.textContent = 'Pausar';
             definirStatus('Conectado', '#4caf50');
         }
     }
 
-    iniciarGrafico();
+    inicializarGrafico();
     buscarInfoInterface();
     iniciarMonitoramento();
-    botaoToggle.addEventListener('click', alternarPausa);
+    botaoAlternar.addEventListener('click', alternarPausa);
 });
