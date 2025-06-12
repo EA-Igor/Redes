@@ -10,11 +10,11 @@
         margin-bottom: 10px;
     }
 
-    #status-bar {
+    #barra-status{
         margin-bottom: 20px;
     }
 
-    #trafficChart {
+    #grafico-trafego {
         width: 100%;
         height: 250px;
         max-height: 250px;
