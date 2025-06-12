@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Monitor SNMP MikroTik</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <h2>Monitor SNMP MikroTik</h2>
+
+    <div id="status-bar">
+        <div class="info" id="hostname">IP/Hostname: --</div>
+        <div class="info" id="interface-name">Interface: --</div>
+        <div class="info">Download: <span id="rx-value">0</span> <span id="rx-unit">bps</span></div>
+        <div class="info">Upload: <span id="tx-value">0</span> <span id="tx-unit">bps</span></div>
+        <div class="info">Status: <span id="status-text">--</span></div>
+        <div class="info">Última atualização: <span id="last-update-time">--</span></div>
+        <button id="toggle-button">Pausar</button>
+    </div>
+
+    <canvas id="trafficChart"></canvas>
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Seu script de monitoramento -->
+    <script src="script.js"></script>
+
+</body>
+
+</html>
