@@ -1,101 +1,101 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const API_BASE_URL = 'http://localhost:3002';
-    const POLLING_INTERVAL = 1000; // agora é 1 segundo
-    const MAX_DATA_POINTS = 60;
+    const URL_API = 'http://localhost:3002';
+    const INTERVALO_PESQUISA = 1000;
+    const MAX_PONTOS = 60;
 
-    const rxValueElem = document.getElementById('rx-value');
-    const rxUnitElem = document.getElementById('rx-unit');
-    const txValueElem = document.getElementById('tx-value');
-    const txUnitElem = document.getElementById('tx-unit');
-    const statusTextElem = document.getElementById('status-text');
-    const lastUpdateTimeElem = document.getElementById('last-update-time');
-    const toggleButton = document.getElementById('toggle-button');
-    const hostnameElem = document.getElementById('hostname');
-    const interfaceNameElem = document.getElementById('interface-name');
+    const valorRx = document.getElementById('rx-value');
+    const unidadeRx = document.getElementById('rx-unit');
+    const valorTx = document.getElementById('tx-value');
+    const unidadeTx = document.getElementById('tx-unit');
+    const textoStatus = document.getElementById('status-text');
+    const ultimaAtualizacao = document.getElementById('last-update-time');
+    const botaoToggle = document.getElementById('toggle-button');
+    const nomeHost = document.getElementById('hostname');
+    const nomeInterface = document.getElementById('interface-name');
 
-    let trafficInterval;
-    let isPaused = false;
-    let chart;
+    let intervaloTrafego;
+    let pausado = false;
+    let grafico;
 
-    function formatBitrate(bits) {
-        if (bits < 1000) return { value: bits.toFixed(0), unit: 'bps' };
-        if (bits < 1000000) return { value: (bits / 1000).toFixed(2), unit: 'Kbps' };
-        if (bits < 1000000000) return { value: (bits / 1000000).toFixed(2), unit: 'Mbps' };
-        return { value: (bits / 1000000000).toFixed(2), unit: 'Gbps' };
+    function formatarTaxa(bits) {
+        if (bits < 1000) return { valor: bits.toFixed(0), unidade: 'bps' };
+        if (bits < 1000000) return { valor: (bits / 1000).toFixed(2), unidade: 'Kbps' };
+        if (bits < 1000000000) return { valor: (bits / 1000000).toFixed(2), unidade: 'Mbps' };
+        return { valor: (bits / 1000000000).toFixed(2), unidade: 'Gbps' };
     }
 
-    async function fetchTrafficData() {
+    async function buscarDadosTrafego() {
         try {
-            const response = await fetch(`${API_BASE_URL}/api/traffic`);
-            const data = await response.json();
+            const resposta = await fetch(`${URL_API}/api/traffic`);
+            const dados = await resposta.json();
 
-            if (data.error || data.message.includes("Primeira coleta")) {
-                statusTextElem.textContent = "Aguardando dados...";
+            if (dados.error || dados.message.includes("Primeira coleta")) {
+                textoStatus.textContent = "Aguardando dados...";
                 return;
             }
 
-            updateUI(data);
+            atualizarInterface(dados);
 
-        } catch (err) {
-            console.error("Erro ao buscar tráfego:", err);
-            setStatus('Erro', 'red');
-            stopMonitoring();
+        } catch (erro) {
+            console.error("Erro ao buscar tráfego:", erro);
+            definirStatus('Erro', 'red');
+            pararMonitoramento();
         }
     }
 
-    async function fetchInterfaceInfo() {
+    async function buscarInfoInterface() {
         try {
-            const nameRes = await fetch(`${API_BASE_URL}/api/interface-name`);
-            const nameData = await nameRes.json();
-            interfaceNameElem.textContent = `Interface: ${nameData.name}`;
+            const respostaNome = await fetch(`${URL_API}/api/interface-name`);
+            const dadosNome = await respostaNome.json();
+            nomeInterface.textContent = `Interface: ${dadosNome.name}`;
 
-            const configRes = await fetch(`${API_BASE_URL}/`);
-            const configText = await configRes.text();
-            const ipMatch = configText.match(/IP=([\d.]+)/);
-            hostnameElem.textContent = `IP/Hostname: ${ipMatch ? ipMatch[1] : '--'}`;
+            const respostaConfig = await fetch(`${URL_API}/`);
+            const textoConfig = await respostaConfig.text();
+            const ipEncontrado = textoConfig.match(/IP=([\d.]+)/);
+            nomeHost.textContent = `IP/Hostname: ${ipEncontrado ? ipEncontrado[1] : '--'}`;
         } catch {
-            interfaceNameElem.textContent = "Interface: Erro";
-            hostnameElem.textContent = "IP/Hostname: Erro";
+            nomeInterface.textContent = "Interface: Erro";
+            nomeHost.textContent = "IP/Hostname: Erro";
         }
     }
 
-    function updateUI(data) {
-        const rx = formatBitrate(data.inBitsPerSecond);
-        const tx = formatBitrate(data.outBitsPerSecond);
+    function atualizarInterface(dados) {
+        const rx = formatarTaxa(dados.inBitsPerSecond);
+        const tx = formatarTaxa(dados.outBitsPerSecond);
 
-        rxValueElem.textContent = rx.value;
-        rxUnitElem.textContent = rx.unit;
-        txValueElem.textContent = tx.value;
-        txUnitElem.textContent = tx.unit;
+        valorRx.textContent = rx.valor;
+        unidadeRx.textContent = rx.unidade;
+        valorTx.textContent = tx.valor;
+        unidadeTx.textContent = tx.unidade;
 
-        setStatus('Conectado', '#4caf50');
-        lastUpdateTimeElem.textContent = new Date().toLocaleTimeString();
+        definirStatus('Conectado', '#4caf50');
+        ultimaAtualizacao.textContent = new Date().toLocaleTimeString();
 
         const timestamp = new Date().toLocaleTimeString();
-        addDataToChart(timestamp, data.inBitsPerSecond / 1000, data.outBitsPerSecond / 1000);
+        adicionarAoGrafico(timestamp, dados.inBitsPerSecond / 1000, dados.outBitsPerSecond / 1000);
     }
 
-    function addDataToChart(label, rxData, txData) {
-        chart.data.labels.push(label);
-        chart.data.datasets[0].data.push(rxData); // Download (Rx)
-        chart.data.datasets[1].data.push(txData); // Upload (Tx)
+    function adicionarAoGrafico(rotulo, dadoRx, dadoTx) {
+        grafico.data.labels.push(rotulo);
+        grafico.data.datasets[0].data.push(dadoRx); // Download (Rx)
+        grafico.data.datasets[1].data.push(dadoTx); // Upload (Tx)
 
-        if (chart.data.labels.length > MAX_DATA_POINTS) {
-            chart.data.labels.shift();
-            chart.data.datasets.forEach(ds => ds.data.shift());
+        if (grafico.data.labels.length > MAX_PONTOS) {
+            grafico.data.labels.shift();
+            grafico.data.datasets.forEach(ds => ds.data.shift());
         }
 
-        chart.update();
+        grafico.update();
     }
 
-    function setStatus(text, color) {
-        statusTextElem.textContent = text;
-        statusTextElem.style.color = color;
+    function definirStatus(texto, cor) {
+        textoStatus.textContent = texto;
+        textoStatus.style.color = cor;
     }
 
-    function initializeChart() {
-        const ctx = document.getElementById('trafficChart').getContext('2d');
-        chart = new Chart(ctx, {
+    function inicializarGrafico() {
+        const contexto = document.getElementById('trafficChart').getContext('2d');
+        grafico = new Chart(contexto, {
             type: 'line',
             data: {
                 labels: [],
@@ -134,31 +134,31 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function startMonitoring() {
-        if (trafficInterval) clearInterval(trafficInterval);
-        fetchTrafficData();
-        trafficInterval = setInterval(fetchTrafficData, POLLING_INTERVAL);
+    function iniciarMonitoramento() {
+        if (intervaloTrafego) clearInterval(intervaloTrafego);
+        buscarDadosTrafego();
+        intervaloTrafego = setInterval(buscarDadosTrafego, INTERVALO_PESQUISA);
     }
 
-    function stopMonitoring() {
-        clearInterval(trafficInterval);
+    function pararMonitoramento() {
+        clearInterval(intervaloTrafego);
     }
 
-    function togglePause() {
-        isPaused = !isPaused;
-        if (isPaused) {
-            stopMonitoring();
-            toggleButton.textContent = 'Retomar';
-            setStatus('Pausado', 'orange');
+    function alternarPausa() {
+        pausado = !pausado;
+        if (pausado) {
+            pararMonitoramento();
+            botaoToggle.textContent = 'Retomar';
+            definirStatus('Pausado', 'orange');
         } else {
-            startMonitoring();
-            toggleButton.textContent = 'Pausar';
-            setStatus('Conectado', '#4caf50');
+            iniciarMonitoramento();
+            botaoToggle.textContent = 'Pausar';
+            definirStatus('Conectado', '#4caf50');
         }
     }
 
-    initializeChart();
-    fetchInterfaceInfo();
-    startMonitoring();
-    toggleButton.addEventListener('click', togglePause);
+    inicializarGrafico();
+    buscarInfoInterface();
+    iniciarMonitoramento();
+    botaoToggle.addEventListener('click', alternarPausa);
 });
