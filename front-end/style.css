@@ -27,7 +27,7 @@
         margin: 5px 0;
     }
 
-    #toggle-button {
+    #botao-alternar {
         margin-top: 10px;
         padding: 8px 16px;
         background: #3182ce;
@@ -37,6 +37,6 @@
         cursor: pointer;
     }
 
-    #toggle-button:hover {
+    #botao-alternar:hover {
         background: #2b6cb0;
     }

@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const unidadeTx = document.getElementById('unidade-tx');
     const textoStatus = document.getElementById('texto-status');
     const ultimaAtualizacao = document.getElementById('ultima-atualizacao');
-    const botaoToggle = document.getElementById('botao-alternar');
+    const botaoAlternar = document.getElementById('botao-alternar');
     const nomeHost = document.getElementById('nome-host');
     const nomeInterface = document.getElementById('nome-interface');
 
@@ -148,11 +148,11 @@ document.addEventListener('DOMContentLoaded', () => {
         pausado = !pausado;
         if (pausado) {
             pararMonitoramento();
-            botaoToggle.textContent = 'Retomar';
+            botaoAlternar.textContent = 'Retomar';
             definirStatus('Pausado', 'orange');
         } else {
             iniciarMonitoramento();
-            botaoToggle.textContent = 'Pausar';
+            botaoAlternar.textContent = 'Pausar';
             definirStatus('Conectado', '#4caf50');
         }
     }
@@ -160,5 +160,5 @@ document.addEventListener('DOMContentLoaded', () => {
     inicializarGrafico();
     buscarInfoInterface();
     iniciarMonitoramento();
-    botaoToggle.addEventListener('click', alternarPausa);
+    botaoAlternar.addEventListener('click', alternarPausa);
 });
