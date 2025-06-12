@@ -3,15 +3,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const INTERVALO_PESQUISA = 1000;
     const MAX_PONTOS = 60;
 
-    const valorRx = document.getElementById('rx-value');
-    const unidadeRx = document.getElementById('rx-unit');
-    const valorTx = document.getElementById('tx-value');
-    const unidadeTx = document.getElementById('tx-unit');
-    const textoStatus = document.getElementById('status-text');
-    const ultimaAtualizacao = document.getElementById('last-update-time');
-    const botaoToggle = document.getElementById('toggle-button');
-    const nomeHost = document.getElementById('hostname');
-    const nomeInterface = document.getElementById('interface-name');
+    const valorRx = document.getElementById('valor-rx');
+    const unidadeRx = document.getElementById('unidade-rx');
+    const valorTx = document.getElementById('valor-tx');
+    const unidadeTx = document.getElementById('unidade-tx');
+    const textoStatus = document.getElementById('texto-status');
+    const ultimaAtualizacao = document.getElementById('ultima-atualizacao');
+    const botaoToggle = document.getElementById('botao-alternar');
+    const nomeHost = document.getElementById('nome-host');
+    const nomeInterface = document.getElementById('nome-interface');
 
     let intervaloTrafego;
     let pausado = false;
