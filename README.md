@@ -84,3 +84,7 @@ A página deverá carregar e começar a exibir os dados de tráfego da interface
 
 - O script do back-end ([back-end/back.js](back-end/back.js)) lida com o rollover de contadores SNMP de 64 bits (`MAX_COUNTER64`).
 - O front-end ([front-end/script.js](front-end/script.js)) atualiza os dados a cada 5 segundos (`INTERVALO_ATUALIZACAO`) e mantém um histórico de 60 pontos no gráfico (`MAX_PONTOS`).
+
+## Autores:
+
+- Igor de Eça Almeida e Pedro Henrique de Oliveira dos Anjos
