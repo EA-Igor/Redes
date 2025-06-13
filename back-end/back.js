@@ -6,9 +6,9 @@ const cors = require('cors');
 // --- Configurações ---
 const config = {
     port: 3002,
-    mikrotikIp: process.env.MIKROTIK_IP || '192.168.56.101',
+    mikrotikIp: process.env.MIKROTIK_IP || '192.168.90.2',
     snmpCommunity: process.env.SNMP_COMMUNITY || 'public',
-    interfaceIndex: process.env.INTERFACE_INDEX || '2',
+    interfaceIndex: process.env.INTERFACE_INDEX || '4',
 };
 
 const OIDs = {

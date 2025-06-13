@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const API_URL_BASE = 'http://localhost:3002';
-    const INTERVALO_ATUALIZACAO = 1000;
+    const INTERVALO_ATUALIZACAO = 5000;
     const MAX_PONTOS = 60;
 
     const valorRx = document.getElementById('valor-rx');
